@@ -6,7 +6,7 @@ namespace IrinCibiBlazesoftChallenge.Services
 {
     public static class SlotMachineEngine
     {
-        // Generates a random slot machine matrix using digits 0-9.
+        //Generates a random slot machine matrix with digits 0-9
         public static int[][] GenerateMatrix(int width, int height)
         {
             int[][] matrix = new int[height][];
@@ -23,12 +23,12 @@ namespace IrinCibiBlazesoftChallenge.Services
             return matrix;
         }
 
-        // Generates all horizontal and zig-zag win line paths based on the configured slot machine dimensions.
+        //Generates all horizontal and zig-zag win line paths based on the configured slot machine dimensions
         public static List<List<(int row, int col)>> GetWinLinePaths(int width, int height)
         {
             var paths = new List<List<(int row, int col)>>();
 
-            // Horizontal rows
+            //Horizontal rows
             for (int row = 0; row < height; row++)
             {
                 var path = new List<(int row, int col)>();
@@ -41,7 +41,7 @@ namespace IrinCibiBlazesoftChallenge.Services
                 paths.Add(path);
             }
 
-            // Zig-zag diagonals
+            //Zig-zag diagonals
             for (int startRow = 0; startRow < height; startRow++)
             {
                 var path = new List<(int row, int col)>();
@@ -84,7 +84,7 @@ namespace IrinCibiBlazesoftChallenge.Services
             return paths;
         }
 
-        // Calculates the win multiplier for a single win line based on consecutive matching symbols from the first column.
+        //Calculate the win multiplier for a single win line based on consecutive matching symbols from the first column
         public static int CalculatePathWin(int[] values)
         {
             if (values.Length < 3)

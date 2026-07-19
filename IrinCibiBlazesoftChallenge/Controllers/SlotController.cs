@@ -32,7 +32,7 @@ using IrinCibiBlazesoftChallenge.Services;
                 return Ok(created);
             }
 
-        //Executes a slot machine spin and returns the result, winnings, and updated balance.
+        //Executes a slot machine spin and returns the result, winnings, and updated balance
         [HttpPost("spin")]
             public async Task<IActionResult> Spin([FromBody] SpinRequest request)
             {
@@ -43,15 +43,25 @@ using IrinCibiBlazesoftChallenge.Services;
 
                 var config = await _mongoService.GetGameConfigAsync();
 
-                //Deduct bet atomically
-                var updatedPlayer = await _mongoService.TryDeductBalanceAsync(request.PlayerId, request.BetAmount);
-                if (updatedPlayer == null)
-                {
-                    return BadRequest("Insufficient balance or player not found.");
-                }
+            //Check if player exists
+            var player = await _mongoService.GetPlayersAsync(request.PlayerId);
 
-                //Spin Matrix
-                int[][] matrix = SlotMachineEngine.GenerateMatrix(config.Width, config.Height);
+               if (player == null)
+               {
+                return NotFound("Player not found.");
+               }
+
+            //Check if player has enough balance
+               if (player.Balance < request.BetAmount)
+               {
+                return BadRequest("Insufficient balance.");
+               }
+
+            //Deduct the bet atomically
+            var updatedPlayer = await _mongoService.TryDeductBalanceAsync(request.PlayerId, request.BetAmount);
+
+            //Spin Matrix
+            int[][] matrix = SlotMachineEngine.GenerateMatrix(config.Width, config.Height);
 
                 //Fetch win paths and scan them
                 var paths = SlotMachineEngine.GetWinLinePaths(config.Width, config.Height);
@@ -87,7 +97,7 @@ using IrinCibiBlazesoftChallenge.Services;
                 });
             }
 
-        // Adds funds to the player's balance.
+        //Adds funds to the player's balance
         [HttpPost("balance")]
             public async Task<IActionResult> UpdateBalance([FromBody] UpdateBalanceRequest request)
             {
@@ -110,7 +120,7 @@ using IrinCibiBlazesoftChallenge.Services;
                 return Ok(new { message = "Balance updated.", balance = player.Balance });
             }
 
-        // Updates the slot machine dimensions stored in MongoDB.
+        //Updates the slot machine dimensions stored in MongoDB
         [HttpPost("config")]
             public async Task<IActionResult> UpdateConfig([FromBody] UpdateConfigRequest request)
             {

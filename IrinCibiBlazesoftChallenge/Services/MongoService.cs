@@ -18,18 +18,18 @@ namespace IrinCibiBlazesoftChallenge.Services
             _configCollection = database.GetCollection<GameConfig>("GameConfig");
         }
 
-        // Creates a new player in MongoDB.
+        //Creates a new player in MongoDB
         public async Task<Players> CreatePlayersAsync(Players Players)
             {
                 await _PlayersCollection.InsertOneAsync(Players);
                 return Players;
             }
 
-        // Retrieves a player by ID.
+        //Retrieves player by ID
         public async Task<Players> GetPlayersAsync(string id) =>
                 await _PlayersCollection.Find(p => p.Id == id).FirstOrDefaultAsync();
 
-        // Atomically increases or decreases a player's balance.
+        //Atomically increases or decreases a player's balance
         public async Task<Players> AdjustBalanceAsync(string PlayersId, decimal amount)
             {
                 var filter = Builders<Players>.Filter.Eq(p => p.Id, PlayersId);
@@ -43,12 +43,12 @@ namespace IrinCibiBlazesoftChallenge.Services
                 return await _PlayersCollection.FindOneAndUpdateAsync(filter, update, options);
             }
 
-        // Deducts the bet only if the player has sufficient funds.
+        //Deducts the bet only if the player has sufficient funds
         public async Task<Players?> TryDeductBalanceAsync(string PlayersId, decimal betAmount)
             {
                 var filter = Builders<Players>.Filter.And(
                     Builders<Players>.Filter.Eq(p => p.Id, PlayersId),
-                    Builders<Players>.Filter.Gte(p => p.Balance, betAmount) // Balance must be >= bet
+                    Builders<Players>.Filter.Gte(p => p.Balance, betAmount) 
                 );
 
                 var update = Builders<Players>.Update.Inc(p => p.Balance, -betAmount);
@@ -57,19 +57,19 @@ namespace IrinCibiBlazesoftChallenge.Services
                 return await _PlayersCollection.FindOneAndUpdateAsync(filter, update, options);
             }
 
-        // Retrieves the current slot machine dimensions from MongoDB.
+        //Retrieves the current slot machine dimensions from MongoDB
         public async Task<GameConfig> GetGameConfigAsync()
             {
                 var config = await _configCollection.Find(_ => true).FirstOrDefaultAsync();
                 if (config == null)
                 {
-                    config = new GameConfig { Width = 5, Height = 3 }; // default starting size
+                    config = new GameConfig { Width = 5, Height = 3 }; 
                     await _configCollection.InsertOneAsync(config);
                 }
                 return config;
             }
 
-        // Updates the slot machine dimensions without restarting the application.
+        //Updates the slot machine dimensions without restarting the application
         public async Task UpdateGameConfigAsync(int width, int height)
             {
                 var config = await GetGameConfigAsync();
