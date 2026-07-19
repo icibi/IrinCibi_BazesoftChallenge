@@ -1,7 +1,4 @@
-﻿# Author: Irin Cibi
-# Date: 19/07/2016
-
-# Blazesoft Slot Machine API
+﻿# Blazesoft Slot Machine API
 ## Overview
 
 This project is a .NET 8 Web API that simulates a slot machine game using MongoDB as the database.
