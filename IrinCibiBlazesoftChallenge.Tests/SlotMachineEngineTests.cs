@@ -1,4 +1,8 @@
-﻿using System.Linq;
+﻿/* Author: Irin Cibi
+ * Date: 19/07/2016
+ */
+
+using System.Linq;
 using Xunit;
 using IrinCibiBlazesoftChallenge.Services;
 
